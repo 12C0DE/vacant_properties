@@ -15,8 +15,10 @@ export const StateDDL = () => {
         label="State"
         onChange={(e) => setSelState(e.target.value)}
       >
-        {stateList.map((st) => (
-          <MenuItem value={st}>{st}</MenuItem>
+        {stateList.map((st, index) => (
+          <MenuItem key={`sL${index}`} value={st}>
+            {st}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

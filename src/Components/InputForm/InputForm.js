@@ -8,6 +8,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import { StateDDL } from "./StateDDL";
+import { PropertyTypeDDL } from "./PropertyTypeDDL";
 
 export const InputForm = () => {
   const [mailAddrMatches, setMailAddrMatches] = useState();
@@ -32,6 +33,7 @@ export const InputForm = () => {
             <TextField name="firstName" variant="outlined" label="First Name" />
             <TextField name="lastName" variant="outlined" label="Last Name" />
           </Stack>
+          <PropertyTypeDDL />
           <section name="addressSec">
             <Stack direction="column">
               <TextField

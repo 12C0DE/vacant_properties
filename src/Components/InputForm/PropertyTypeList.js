@@ -6,7 +6,7 @@ const columns = {
   field: "propertyType",
   headerName: "Property Type",
 };
-export const PropertyType = () => {
+export const PropertyTypeList = () => {
   const [propTypeRows, setPropTypeRows] = useState();
 
   useEffect(() => {}, [propTypeRows]);
