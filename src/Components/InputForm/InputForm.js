@@ -8,10 +8,13 @@ import {
   Checkbox,
 } from "@mui/material";
 import { StateDDL } from "./StateDDL";
-import { PropertyTypeDDL } from "./PropertyTypeDDL";
+import { PropertyTypeDDL } from "./PropertyTypes/PropertyTypeDDL";
+import { PropertyTypeAdd } from "./PropertyTypes/PropertyTypeAdd";
+import { PropertyTypeList } from "./PropertyTypes/PropertyTypeList";
 
 export const InputForm = () => {
   const [mailAddrMatches, setMailAddrMatches] = useState();
+  const [openModal, setOpenModal] = useState(false);
   const {
     register,
     handleSubmit,
@@ -19,6 +22,14 @@ export const InputForm = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => console.log(data);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   return (
     <Container maxWidth="lg">
@@ -33,7 +44,10 @@ export const InputForm = () => {
             <TextField name="firstName" variant="outlined" label="First Name" />
             <TextField name="lastName" variant="outlined" label="Last Name" />
           </Stack>
-          <PropertyTypeDDL />
+          <Stack direction="row">
+            <PropertyTypeDDL />
+            <PropertyTypeAdd clickOpen={handleOpenModal} />
+          </Stack>
           <section name="addressSec">
             <Stack direction="column">
               <TextField
@@ -114,6 +128,7 @@ export const InputForm = () => {
           </section>
         </Stack>
       </form>
+      <PropertyTypeList openModal={openModal} closeModal={handleCloseModal} />
     </Container>
   );
 };

@@ -15,7 +15,7 @@ export const PropertyTypeDDL = () => {
   }, []);
 
   return (
-    <FormControl>
+    <FormControl className="w-1/2">
       <InputLabel id="propTypes">Property Types</InputLabel>
       <Select
         label="Property Type"
