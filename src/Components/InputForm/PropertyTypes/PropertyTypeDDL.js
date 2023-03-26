@@ -6,12 +6,17 @@ export const PropertyTypeDDL = () => {
   const [selectedPropertyType, setSelectedPropertyType] = useState();
 
   useEffect(() => {
-    fetch(".netlify/functions/getPropertyTypes")
-      .then((response) => response.json())
-      .then((data) => setPropertyTypes(data))
-      .catch((error) => console.error(error));
+    async function fetchData() {
+      fetch("http://localhost:8888/.netlify/functions/getPropertyTypes")
+        // fetch("https://vacantprops.netlify.app/.netlify/functions/getPropertyTypes")
+        .then((response) => response.json())
+        .then((data) => setPropertyTypes(data))
+        .catch((error) => console.error(error));
 
-    console.log(propertyTypes);
+      console.log(propertyTypes);
+    }
+
+    fetchData();
   }, []);
 
   return (
@@ -21,9 +26,13 @@ export const PropertyTypeDDL = () => {
         label="Property Type"
         onChange={(e) => setSelectedPropertyType(e.target.value)}
       >
-        {propertyTypes.map((p, index) => (
-          <MenuItem key={`pT${index}`}>{p}</MenuItem>
-        ))}
+        {propertyTypes
+          .sort((a, b) => a.type - b.type)
+          .map((p, index) => (
+            <MenuItem key={`pT${index}`} value={p.type}>
+              {p.type}
+            </MenuItem>
+          ))}
       </Select>
     </FormControl>
   );

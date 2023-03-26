@@ -6,15 +6,22 @@ import {
   Stack,
   TextField,
   Checkbox,
+  Button,
 } from "@mui/material";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import { IconButton } from "@mui/material";
+import Sheet from "@mui/joy/Sheet";
 import { StateDDL } from "./StateDDL";
 import { PropertyTypeDDL } from "./PropertyTypes/PropertyTypeDDL";
-import { PropertyTypeAdd } from "./PropertyTypes/PropertyTypeAdd";
-import { PropertyTypeList } from "./PropertyTypes/PropertyTypeList";
+import { PropertyTypeAddBtn } from "./PropertyTypes/PropertyTypeAddBtn";
+import { PropertyTypeList } from "./PropertyTypes/PropertyTypeList/PropertyTypeList";
+import { ContactInfo } from "./ContactInfo";
+import uuid from "react-uuid";
 
 export const InputForm = () => {
   const [mailAddrMatches, setMailAddrMatches] = useState();
   const [openModal, setOpenModal] = useState(false);
+  const [contacts, setContacts] = useState([{}]);
   const {
     register,
     handleSubmit,
@@ -23,6 +30,12 @@ export const InputForm = () => {
   } = useForm();
   const onSubmit = (data) => console.log(data);
 
+  const submitRecord = async (data) => {
+    const newRecord = {
+      businessName: data.businessName,
+    };
+  };
+
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -30,6 +43,29 @@ export const InputForm = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+
+  const AddNewContact = () => {
+    // const currContacts = contacts;
+
+    const newContact = {
+      contactId: uuid(),
+      firstName: null,
+      lastName: null,
+      phone: null,
+      type: "Cell",
+    };
+
+    const currContacts = [...contacts, newContact];
+    setContacts(currContacts);
+  };
+
+  const DeleteContact = (delID) => {
+    const currContacts = contacts.filter((c) => c.contactId !== delID);
+
+    setContacts(currContacts);
+  };
+
+  const UpdateContacts = (contactId) => {};
 
   return (
     <Container maxWidth="lg">
@@ -40,15 +76,24 @@ export const InputForm = () => {
             variant="outlined"
             label="Business Name"
           />
-          <Stack direction="row">
-            <TextField name="firstName" variant="outlined" label="First Name" />
-            <TextField name="lastName" variant="outlined" label="Last Name" />
-          </Stack>
+          <section name="CONTACT">
+            <Stack direction="column" flexWrap={true}>
+              <IconButton aria-label="addContact" onClick={AddNewContact}>
+                <PersonAdd color="primary" />
+              </IconButton>
+              {contacts.map((c) => (
+                <ContactInfo
+                  contactId={c.contactId}
+                  delContact={() => DeleteContact(c.contactId)}
+                />
+              ))}
+            </Stack>
+          </section>
           <Stack direction="row">
             <PropertyTypeDDL />
-            <PropertyTypeAdd clickOpen={handleOpenModal} />
+            <PropertyTypeAddBtn clickOpen={handleOpenModal} />
           </Stack>
-          <section name="addressSec">
+          <section name="ADDRESS_SEC">
             <Stack direction="column">
               <TextField
                 name="propertyAddress"
@@ -126,9 +171,30 @@ export const InputForm = () => {
               </Stack>
             ) : null}
           </section>
+          <TextField name="notes" variant="outlined" label="Notes" />
+          <p className="text-xs text-right text-gray-600 italic mt-1">
+            last updated: 10/14/23 12:23pm
+          </p>
         </Stack>
       </form>
       <PropertyTypeList openModal={openModal} closeModal={handleCloseModal} />
+      <Stack direction="row" justifyContent="end" spacing={3} className="my-4">
+        <Button
+          color="primary"
+          variant="outlined"
+          style={{ textTransform: "capitalize" }}
+        >
+          Cancel
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          style={{ textTransform: "capitalize" }}
+          type="submit"
+        >
+          Save
+        </Button>
+      </Stack>
     </Container>
   );
 };
