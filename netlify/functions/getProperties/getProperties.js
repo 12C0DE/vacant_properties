@@ -3,15 +3,15 @@ const mongoClient = new MongoClient(process.env.REACT_APP_DB_CONNECTION);
 
 const clientPromise = mongoClient.connect();
 
-const handler = async (event, context) => {
+const handler = async (event) => {
   try {
-    const data = JSON.parse(event.body);
     const database = (await clientPromise).db(process.env.REACT_APP_DB_NAME);
-    const collection = database.collection("propertyTypes");
-    const result = await collection.insertOne(data);
+    const collection = database.collection("vacantproperties");
+    const results = await collection.find().toArray();
+
     return {
       statusCode: 200,
-      body: JSON.stringify(result),
+      body: JSON.stringify(results),
     };
   } catch (error) {
     return { statusCode: 500, body: error.toString() };
