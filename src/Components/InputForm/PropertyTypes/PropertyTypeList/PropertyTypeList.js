@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { DataGrid, GridValidRowModel } from "@mui/x-data-grid";
 
-import { Modal, Button } from "@mui/material";
+import { Modal, Button, Stack } from "@mui/material";
 import { Sheet } from "@mui/joy";
 import uuid from "react-uuid";
+import axios from "axios";
 
-export const PropertyTypeList = ({ openModal, closeModal }) => {
+export const PropertyTypeList = ({ openModal, closeModal, saveSuccess }) => {
   const [propTypeRows, setPropTypeRows] = useState();
 
   const handleCloseModal = () => {
@@ -73,16 +74,31 @@ export const PropertyTypeList = ({ openModal, closeModal }) => {
     return updatedRow_0;
   };
 
+  const handleSave = () => {
+    console.log("handleSave");
+    if (propTypeRows.some((rw) => rw.hasOwnProperty("isDirty"))) {
+      const newRows = propTypeRows.filter((r) => r.hasOwnProperty("newID"));
+      const promises = newRows.map((item) =>
+        axios.post(
+          "http://localhost:8888/.netlify/functions/addPropertyTypes",
+          // "https://vacantprops.netlify.app/.netlify/functions/getPropertyTypes",
+          { type: item.type }
+        )
+      );
+
+      Promise.all(promises)
+        .then(() => saveSuccess(true))
+        .catch((err) => saveSuccess(false));
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       fetch("http://localhost:8888/.netlify/functions/getPropertyTypes")
         // fetch("https://vacantprops.netlify.app/.netlify/functions/getPropertyTypes")
         .then((response) => response.json())
         .then((data) => setPropTypeRows(data))
-
         .catch((error) => console.error(error));
-
-      console.log(propTypeRows);
     }
 
     fetchData();
@@ -96,8 +112,7 @@ export const PropertyTypeList = ({ openModal, closeModal }) => {
       open={openModal}
       onClose={handleCloseModal}
     >
-      {/* <Modal open={modalOpen} onClose={() => setModalOpen(false)}> */}
-      <Sheet className="m-auto">
+      <Sheet className="m-auto rounded-lg">
         <DataGrid
           style={{ height: 400, width: "100%" }}
           rows={propTypeRows}
@@ -113,12 +128,23 @@ export const PropertyTypeList = ({ openModal, closeModal }) => {
           processRowUpdate={processRowUpdate}
           hideFooter
         />
-        <Button type="button" variant="contained" onClick={addNewRow}>
-          Add new Type
-        </Button>
-        <Button type="button" variant="contained">
-          Save
-        </Button>
+        <Stack direction="row" justifyContent="space-between">
+          <Button type="button" variant="text" onClick={addNewRow}>
+            Add new Type
+          </Button>
+          <Button
+            type="button"
+            variant="text"
+            onClick={handleSave}
+            disabled={
+              !propTypeRows?.some(
+                (r) => r.hasOwnProperty("isDirty") && r.type?.length > 0
+              )
+            }
+          >
+            Save
+          </Button>
+        </Stack>
       </Sheet>
     </Modal>
   );
